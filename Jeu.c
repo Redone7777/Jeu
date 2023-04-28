@@ -12,11 +12,10 @@
 
 */
 
-#include <ncurses.h>
-#include <stdlib.h>
-#include <time.h>
+#include <ncurses.h>     //
+#include <stdlib.h>     // Pour rand())
+#include <time.h>      //  Pour srand(time(NULL)) et clock_t
 #include <unistd.h>
-
 /* Taille de la fenetre ncurses */
 #define HAUTEUR 30
 #define LARGEUR 90
@@ -25,6 +24,8 @@
 #define TailleSquare_Y 2
 #define TailleSquare_X 4
 
+
+// Pour faciliter les tâches
 struct Position
 {
   int y;
@@ -37,12 +38,12 @@ struct Position square; /* Coordonnées du carré */
 
 struct Position food; /* Coordonnées de la nourriture */
 
-struct Position ennemie; /* Coordonnées de l'ennemie */
+
 
 /***** Menu du jeu *****/
-int quit;
 
 /* Cette fonction affiche le menu et renvoie l'option choisie par l'utilisateur. */
+int quit;
 int menu();
 
 /* Affichage des choix à l'utilisateur et renvoie celui sélectionné à menu(). */
@@ -62,9 +63,9 @@ int jouer();
  * Sur l'écran selon la touche appuyée en paramètre.*/
 void deplacement(int ch);
 
-/* La fonction collision prend en paramètre la position du carré et la position de la nourriture.
+/* La fonction collision verifie si la position du carré et la position de la nourriture sont les mêmes.
  * Elle renvoie 1 si le carré est en collision avec la nourriture, sinon elle renvoie 0.*/
-int collision_food(struct Position square, struct Position food);
+int collision_food();
 
 /* Cette fonction calcule le temps écoulé depuis le début du chronomètre. */
 double chrono_secs(clock_t start, clock_t now);
@@ -137,6 +138,7 @@ int main()
     /* Parametrage de la nourriture */
     food.y = rand() % (HAUTEUR - 2) + 1;
     food.x = rand() % (LARGEUR - 3) + 1;
+
 
     if (quit == EXIT_FAILURE)
     {
@@ -216,6 +218,7 @@ int jouer()
   init_pair(1, COLOR_YELLOW, COLOR_BLACK); /* Couleur Jaune pour la nourriture */
   init_pair(2, COLOR_BLACK,   COLOR_WHITE);
 
+
   /* Boucle principale du jeu */
   while (TRUE)
   {
@@ -267,7 +270,7 @@ int jouer()
      * Changer la position de la nourriture.
      * Réinitialise le temps.
      */
-    if (collision_food(square, food))
+    if (collision_food())
     {
       score++;
       food.y = rand() % (HAUTEUR - 2) + 1;
@@ -338,7 +341,7 @@ void deplacement(int ch)
  * Retourne 1 pour indiquer qu'il y a collision.
  * Sinon, elle retourne 0.
  */
-int collision_food(struct Position square, struct Position food)
+int collision_food()
 {
   if (square.y <= food.y && food.y < square.y + TailleSquare_Y &&
       square.x <= food.x && food.x < square.x + TailleSquare_X)
